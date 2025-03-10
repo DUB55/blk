@@ -2130,7 +2130,7 @@ document.querySelector("#drag").addEventListener("mouseup", (e) => {
   dragging = false;
 });
 async function genToken(gid, name) {
-  const { fbToken, fbShardURL } = await fetch("https://blooketbot.glitch.me/join", {
+  const { fbToken, fbShardURL } = await fetch("/api/join", {
     body: JSON.stringify({
       id: gid,
       name: name,
@@ -2201,7 +2201,7 @@ async function connect(gid, name, icog, reqbody = !1) {
   updateStatus("Fetching token...");
   const body = reqbody
     ? reqbody
-    : await fetch("https://blooketbot.glitch.me/join", {
+    : await fetch("/api/join", {
         body: JSON.stringify({
           id: gid,
           name: name,
@@ -2313,7 +2313,10 @@ updateStatus("Ready");
 //end
 
 // simple online count code
-const onlinecountws = new WebSocket('wss://blooketbot.glitch.me/onlinecount');
+// Using relative WebSocket URL when deployed
+const onlinecountws = window.location.protocol === 'https:' ? 
+  new WebSocket(`wss://${window.location.host}/api/onlinecount`) : 
+  new WebSocket('wss://blooketbot.glitch.me/onlinecount');
 
 //discord chat code
 
@@ -2435,7 +2438,9 @@ function discordChatTest() {
     div.scrollTop = div.scrollHeight; //https://stackoverflow.com/questions/270612/scroll-to-bottom-of-div
   }
 
-  let ws = new WebSocket("wss://blooketbot.glitch.me/chat");
+  let ws = window.location.protocol === 'https:' ? 
+    new WebSocket(`wss://${window.location.host}/api/chat`) : 
+    new WebSocket("wss://blooketbot.glitch.me/chat");
   ws.onopen = () => {
     document.querySelector(".discordchat").innerHTML = "";
   };
@@ -2500,7 +2505,9 @@ function discordChatTest() {
   }
   function discordConnect() {
     if (ws.readyState == 3) {
-      ws = new WebSocket("wss://blooketbot.glitch.me/chat");
+      ws = window.location.protocol === 'https:' ? 
+        new WebSocket(`wss://${window.location.host}/api/chat`) : 
+        new WebSocket("wss://blooketbot.glitch.me/chat");
     }
     ws.onmessage = (m) => {
       try {
