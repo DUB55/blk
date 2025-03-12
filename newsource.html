@@ -706,18 +706,124 @@ checkbox[checked]::before {
     </script>
     <script src="script.js"></script>
     
+    <script src="transform.js"></script>
+    
     <!-- Set onboarding tutorial variable (true = show tutorial on first visit) -->
     <script>
         window.on_boarding_tut = true; // Set to false to disable the tutorial
         window.is_blurred_glass_effect = true; // Toggle for blurred glass effect on tutorial
         window.is_background_tut = true; // Toggle for background gradient behind tutorial
+        window.new_toggle_style = true; // Toggle for switch style (false = current style, true = nblk.html style)
+        
+        // Apply toggle style based on new_toggle_style setting
+        if (window.new_toggle_style) {
+            // Add nblk.html toggle style
+            const toggleStyle = document.createElement('style');
+            toggleStyle.textContent = `
+                .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 70px;
+                    height: 40px;
+                }
+
+                .switch input[type="checkbox"] {
+                    -webkit-appearance: none;
+                }
+
+                .switch input:checked + .knob {
+                    background-color: #4BD663;
+                }
+
+                .switch input + .knob {
+                    transition: all .3s ease-in;
+                }
+
+                .switch input + .knob:before {
+                    transition: all .3s ease-in;
+                }
+
+                .switch input:checked + .knob:before {
+                    transform: translateX(30.4px);
+                    box-shadow: -10px 0px 44px 0px;
+                }
+
+                .knob {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    border-radius: 40px;
+                }
+
+                .knob:before {
+                    position: absolute;
+                    background-color: white;
+                    content: "";
+                    left: 4px;
+                    top: 4px;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                }
+                
+                /* Replace checkbox with switch when new_toggle_style is true */
+                checkbox {
+                    display: none;
+                }
+                
+                .switch-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                }
+            `;
+            document.head.appendChild(toggleStyle);
+            
+            // Convert checkboxes to switches
+            document.querySelectorAll('checkbox').forEach(checkbox => {
+                const isChecked = checkbox.hasAttribute('checked');
+                const id = checkbox.id;
+                
+                // Create switch container
+                const switchContainer = document.createElement('div');
+                switchContainer.className = 'switch-container';
+                
+                // Create switch
+                const switchLabel = document.createElement('label');
+                switchLabel.className = 'switch';
+                
+                // Create input
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = id + '-switch';
+                input.checked = isChecked;
+                
+                // Create knob
+                const knob = document.createElement('span');
+                knob.className = 'knob';
+                
+                // Assemble switch
+                switchLabel.appendChild(input);
+                switchLabel.appendChild(knob);
+                
+                // Replace checkbox with switch
+                checkbox.parentNode.insertBefore(switchLabel, checkbox.nextSibling);
+                
+                // Sync checkbox with switch
+                input.addEventListener('change', function() {
+                    if (this.checked) {
+                        checkbox.setAttribute('checked', 'true');
+                    } else {
+                        checkbox.removeAttribute('checked');
+                    }
+                });
+            });
+        }
     </script>
-    
-    <!-- Link overlay.js for loading screen -->
-    <script src="overlay.js"></script>
-    
-    <!-- Link transform.js for UI transformation -->
-    <script src="transform.js"></script>
     
     <!-- Link onboarding.js for CORS Unblock tutorial -->
     <link rel="stylesheet" href="onboarding.css">
