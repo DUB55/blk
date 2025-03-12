@@ -1,1 +1,111 @@
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
 
+.tutorial-content {
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    color: white;
+    font-family: Nunito, sans-serif;
+    text-align: center;
+    position: relative;
+}
+
+/* Default styling (non-glass effect) */
+.tutorial-content.no-glass {
+    background: linear-gradient(to bottom, #091794, #0a1f8a);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Glass effect styling */
+.tutorial-content.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: rgba(31, 38, 135, 0.37) 0px 8px 32px 0px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.tutorial-slide h2 {
+    font-family: 'Titan One', sans-serif;
+    color: white;
+    font-size: 28px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.tutorial-slide p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.tutorial-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.tutorial-link {
+    display: inline-block;
+    background-color: #df9000;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    box-shadow: inset 0 -4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.tutorial-link:hover {
+    transform: scale(0.95);
+}
+
+.tutorial-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.tutorial-button {
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-family: Nunito, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: inset 0 -4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.tutorial-button:hover {
+    transform: scale(0.95);
+}
+
+#tutorial-skip {
+    background-color: #e84135;
+    color: white;
+}
+
+#tutorial-next {
+    background-color: #df9000;
+    color: white;
+}
