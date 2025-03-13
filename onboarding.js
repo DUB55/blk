@@ -39,7 +39,7 @@
         // Define slides content in Dutch
         const slides = [
             {
-                title: 'Blooket Haxx',
+                title: 'Blooket Hacks',
                 content: 'Om de Blooket Hacks te kunnen gebruiken, moet je eerst een Chrome-extensie installeren.',
                 image: ''
             },
