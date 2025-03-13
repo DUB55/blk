@@ -306,7 +306,7 @@
                         <checkbox id="bcf"></checkbox><br>
                         <text class="normtext">First Place Switch:</text>
                         <checkbox id="fpswitch" checked="true"></checkbox><br>
-                        <text class="normtext">*for first place switch to work your amount must not be a number!</text>
+                        
                     </div>
                 `;
                 
