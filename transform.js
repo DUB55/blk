@@ -3,8 +3,96 @@
 // This script transforms the UI of source.html to match blk.html
 // Run this script on the source.html page to see the transformation
 
+// UndoTransformer class definition (moved to the top to avoid reference error)
+class UndoTransformer {
+  constructor() {
+    this.originalStates = new Map();
+    this.addedElements = new WeakSet(); // Changed from Set to WeakSet for better memory management
+    this.removedElements = new Map(); // Track removed elements and their parents
+    this.originalHTML = document.documentElement.cloneNode(true); // Store the entire HTML structure
+    
+    this.observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'attributes') {
+          this.storeOriginalState(mutation.target);
+        } else if (mutation.type === 'childList') {
+          // Track added elements
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              this.recordAddedElement(node);
+              // Also track all child elements
+              node.querySelectorAll('*').forEach(child => {
+                this.recordAddedElement(child);
+              });
+            }
+          });
+          
+          // Track removed elements
+          mutation.removedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              this.recordRemovedElement(node, mutation.target);
+            }
+          });
+        }
+      });
+    });
+    
+    // Start observing the document for changes
+    this.observer.observe(document, {
+      attributes: true,
+      childList: true,
+      subtree: true
+    });
+  }
+
+  storeOriginalState(element) {
+    if (!this.originalStates.has(element)) {
+      this.originalStates.set(element, {
+        classes: [...element.classList],
+        styles: element.getAttribute('style'),
+        attributes: Array.from(element.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {})
+      });
+    }
+  }
+
+  recordAddedElement(element) {
+    this.addedElements.add(element);
+  }
+  
+  recordRemovedElement(element, parent) {
+    if (!this.removedElements.has(element)) {
+      // Store more information about the removed element
+      const nextSibling = element.nextSibling;
+      const previousSibling = element.previousSibling;
+      
+      this.removedElements.set(element, {
+        parent: parent,
+        nextSibling: nextSibling,
+        previousSibling: previousSibling,
+        outerHTML: element.outerHTML,
+        innerHTML: element.innerHTML
+      });
+    }
+  }
+
+  restoreDOM() {
+    // Implementation will be in undo_transform.js
+    console.log('Restoration method called, but implementation is in undo_transform.js');
+  }
+}
+
 (function() {
     console.log('Starting UI transformation...');
+    
+    // Initialize the UndoTransformer to track DOM changes
+    if (!window.undoTransformer) {
+        // Create a new UndoTransformer if it doesn't exist
+        window.undoTransformer = new UndoTransformer();
+        console.log('UndoTransformer initialized for tracking changes');
+    }
     
     // 1. Transform the body background and styling
     function transformBodyStyle() {
@@ -306,7 +394,6 @@
                         <checkbox id="bcf"></checkbox><br>
                         <text class="normtext">First Place Switch:</text>
                         <checkbox id="fpswitch" checked="true"></checkbox><br>
-                        
                     </div>
                 `;
                 
@@ -323,41 +410,8 @@
                 // Style the checkbox elements
                 const checkboxes = ctrlPanel.querySelectorAll('checkbox');
                 checkboxes.forEach(checkbox => {
-                    checkbox.style.display = 'inline-block';
-                    checkbox.style.width = '60px';
-                    checkbox.style.height = '34px';
-                    checkbox.style.backgroundColor = 'grey';
-                    checkbox.style.borderRadius = '34px';
-                    checkbox.style.position = 'relative';
-                    checkbox.style.cursor = 'pointer';
-                    checkbox.style.transition = 'background-color 0.3s';
-                    checkbox.style.marginLeft = '10px';
-                    
-                    // Add the before pseudo-element styling
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        checkbox::before {
-                            content: "";
-                            position: absolute;
-                            width: 26px;
-                            height: 26px;
-                            border-radius: 50%;
-                            background-color: white;
-                            top: 4px;
-                            left: 4px;
-                            transition: transform 0.3s;
-                        }
-                        
-                        checkbox[checked] {
-                            background-color: #df9000;
-                        }
-                        
-                        checkbox[checked]::before {
-                            transform: translateX(26px);
-                            background-color: white;
-                        }
-                    `;
-                    document.head.appendChild(style);
+                        checkbox.style.display = 'none';
+                    return;
                     
                     // Set initial state based on checked attribute
                     if (checkbox.hasAttribute('checked')) {
@@ -366,32 +420,15 @@
                 });
                 
                 
-                // Ensure the checkbox functionality works
+                // Keep checkbox elements hidden
                 const icogmode = document.getElementById('icogmode');
                 const bcf = document.getElementById('bcf');
                 const fpswitch = document.getElementById('fpswitch');
                 
                 if (icogmode && bcf && fpswitch) {
-                    // Preserve the original functionality
+                    // Set initial states only
                     icogmode.checked = true;
                     fpswitch.checked = true;
-                    
-                    // Add click event listeners to toggle the checked state
-                    const toggleCheckbox = function() {
-                        const isChecked = this.hasAttribute('checked');
-                        if (isChecked) {
-                            this.removeAttribute('checked');
-                            this.style.backgroundColor = 'grey';
-                        } else {
-                            this.setAttribute('checked', 'true');
-                            this.style.backgroundColor = '#df9000';
-                        }
-                    };
-                    
-                    // Add click event listeners to all checkboxes
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener('click', toggleCheckbox);
-                    });
                 }
             }
         }
@@ -604,3 +641,5 @@
     // Run the transformation
     executeTransformation();
 })();
+
+// UndoTransformer class is now defined at the top of the file
