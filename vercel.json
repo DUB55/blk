@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/join",
+      "destination": "https://blooketbot.glitch.me/join"
+    },
+    {
+      "source": "/chat",
+      "destination": "https://blooketbot.glitch.me/chat"
+    },
+    {
+      "source": "/onlinecount",
+      "destination": "https://blooketbot.glitch.me/onlinecount"
+    }
+  ]
+}
